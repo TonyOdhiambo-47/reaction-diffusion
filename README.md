@@ -102,7 +102,3 @@ Where:
 - Animation pauses when browser tab is hidden
 - Resolution can be adjusted for performance
 - Simulation speed can be increased for faster evolution
-
-## License
-
-MIT
