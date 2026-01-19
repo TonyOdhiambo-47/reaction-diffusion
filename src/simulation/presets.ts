@@ -8,8 +8,7 @@ export interface Preset {
 }
 
 /**
- * Curated presets for different pattern types
- * Based on known Gray-Scott parameter combinations
+ * Parameter presets for common pattern types.
  */
 export const presets: Preset[] = [
   {

@@ -70,31 +70,49 @@ export function ControlPanel({
             <Button
               onClick={simulator.isPlaying ? simulator.pause : simulator.play}
               className="flex-1"
+              aria-label={simulator.isPlaying ? 'Pause simulation' : 'Play simulation'}
             >
               {simulator.isPlaying ? (
                 <>
-                  <Pause className="mr-2 h-4 w-4" />
+                  <Pause className="mr-2 h-4 w-4" aria-hidden="true" />
                   Pause
                 </>
               ) : (
                 <>
-                  <Play className="mr-2 h-4 w-4" />
+                  <Play className="mr-2 h-4 w-4" aria-hidden="true" />
                   Play
                 </>
               )}
             </Button>
-            <Button onClick={simulator.step} variant="outline">
-              <StepForward className="h-4 w-4" />
+            <Button 
+              onClick={simulator.step} 
+              variant="outline"
+              aria-label="Step simulation forward one frame"
+            >
+              <StepForward className="h-4 w-4" aria-hidden="true" />
             </Button>
-            <Button onClick={simulator.reset} variant="outline">
-              <RotateCcw className="h-4 w-4" />
+            <Button 
+              onClick={simulator.reset} 
+              variant="outline"
+              aria-label="Reset simulation to initial state"
+            >
+              <RotateCcw className="h-4 w-4" aria-hidden="true" />
             </Button>
-            <Button onClick={simulator.randomSeed} variant="outline">
-              <Shuffle className="h-4 w-4" />
+            <Button 
+              onClick={simulator.randomSeed} 
+              variant="outline"
+              aria-label="Generate random seed pattern"
+            >
+              <Shuffle className="h-4 w-4" aria-hidden="true" />
             </Button>
           </div>
-          <Button onClick={simulator.exportPNG} variant="outline" className="w-full">
-            <Download className="mr-2 h-4 w-4" />
+          <Button 
+            onClick={simulator.exportPNG} 
+            variant="outline" 
+            className="w-full"
+            aria-label="Download current simulation frame as PNG"
+          >
+            <Download className="mr-2 h-4 w-4" aria-hidden="true" />
             Download PNG
           </Button>
         </CardContent>
@@ -160,6 +178,7 @@ export function ControlPanel({
             onValueChange={handlePresetSelect}
             options={presetOptions}
             placeholder="Select a preset..."
+            aria-label="Select simulation preset"
           />
         </CardContent>
       </Card>
@@ -171,23 +190,27 @@ export function ControlPanel({
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-yellow-400 mb-2">
+            <label htmlFor="palette-select" className="block text-sm font-medium text-yellow-400 mb-2">
               Color Palette
             </label>
             <Select
+              id="palette-select"
               value={paletteName}
               onValueChange={(value) => onPaletteChange(value as PaletteName)}
               options={paletteOptions}
+              placeholder="Select color palette"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-yellow-400 mb-2">
+            <label htmlFor="resolution-select" className="block text-sm font-medium text-yellow-400 mb-2">
               Resolution
             </label>
             <Select
+              id="resolution-select"
               value={resolution.toString()}
               onValueChange={(value) => onResolutionChange(parseInt(value))}
               options={resolutionOptions}
+              placeholder="Select resolution"
             />
             {resolution === 512 && (
               <p className="mt-2 text-xs text-yellow-400/70">

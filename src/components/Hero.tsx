@@ -68,12 +68,12 @@ export function Hero({ onScrollToSimulator, onScrollToScience }: HeroProps) {
             <span className="bg-gradient-to-r from-yellow-400 via-yellow-300 to-cyan-400 bg-clip-text text-transparent drop-shadow-2xl">
               Reaction
             </span>
-            <br />
+            {' '}
             <span className="bg-gradient-to-r from-cyan-400 via-yellow-400 to-yellow-300 bg-clip-text text-transparent drop-shadow-2xl">
               Diffusion
             </span>
-            <br />
-            <span className="text-5xl md:text-6xl lg:text-7xl text-gray-200 font-bold">
+            {' '}
+            <span className="bg-gradient-to-r from-yellow-300 via-cyan-300 to-yellow-400 bg-clip-text text-transparent drop-shadow-2xl">
               Studio
             </span>
           </motion.h1>

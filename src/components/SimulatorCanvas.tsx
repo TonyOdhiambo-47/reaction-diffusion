@@ -35,6 +35,8 @@ export function SimulatorCanvas({ canvasRef, className }: SimulatorCanvasProps) 
           <canvas
             ref={canvasRef}
             className="w-full h-full block"
+            role="img"
+            aria-label="Reaction-diffusion simulation visualization"
             style={{ 
               imageRendering: 'auto',
               maxWidth: '100%',

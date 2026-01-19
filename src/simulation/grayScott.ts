@@ -1,17 +1,8 @@
 /**
  * Gray-Scott Reaction-Diffusion Simulation
  * 
- * Implements the Gray-Scott model for pattern formation:
- * 
  * ∂U/∂t = DU * ∇²U − U * V² + F * (1 − U)
  * ∂V/∂t = DV * ∇²V + U * V² − (F + k) * V
- * 
- * Where:
- * - U, V: concentrations of two chemical species
- * - DU, DV: diffusion coefficients
- * - F: feed rate
- * - k: kill rate
- * - ∇²: Laplacian operator (5-point stencil)
  */
 
 export interface GrayScottParams {
@@ -48,12 +39,10 @@ export function createSimulationState(
   const u = new Float32Array(size);
   const v = new Float32Array(size);
 
-  // Initialize U = 1 everywhere, V = 0 everywhere
   u.fill(1.0);
   v.fill(0.0);
 
   if (seedType === 'center') {
-    // Single seed in center
     const centerX = Math.floor(width / 2);
     const centerY = Math.floor(height / 2);
     const radius = Math.min(width, height) * 0.1;
@@ -72,7 +61,6 @@ export function createSimulationState(
       }
     }
   } else if (seedType === 'random') {
-    // Random seed points
     const numSeeds = 3 + Math.floor(Math.random() * 5);
     for (let i = 0; i < numSeeds; i++) {
       const x = Math.floor(Math.random() * width);
@@ -95,7 +83,6 @@ export function createSimulationState(
       }
     }
   } else if (seedType === 'multiple') {
-    // Multiple seeds in grid pattern
     const gridSize = 3;
     const spacingX = width / (gridSize + 1);
     const spacingY = height / (gridSize + 1);
@@ -127,7 +114,7 @@ export function createSimulationState(
 }
 
 /**
- * Compute Laplacian using 5-point stencil with periodic boundary conditions.
+ * Computes Laplacian using 5-point stencil with periodic boundary conditions.
  */
 function laplacian(
   grid: Float32Array,
@@ -139,19 +126,16 @@ function laplacian(
   const idx = y * width + x;
   const center = grid[idx];
   
-  // Periodic boundary conditions
   const left = grid[y * width + ((x - 1 + width) % width)];
   const right = grid[y * width + ((x + 1) % width)];
   const up = grid[((y - 1 + height) % height) * width + x];
   const down = grid[((y + 1) % height) * width + x];
   
-  // 5-point stencil: (left + right + up + down - 4*center)
   return left + right + up + down - 4 * center;
 }
 
 /**
- * Perform one time step of Gray-Scott simulation.
- * Uses explicit Euler method with time step dt.
+ * Performs one time step of Gray-Scott simulation using explicit Euler method.
  */
 export function stepSimulation(
   state: SimulationState,
@@ -161,50 +145,34 @@ export function stepSimulation(
   const { width, height, u, v } = state;
   const { du, dv, f, k } = params;
   
-  // Create temporary arrays for updated values
   const uNew = new Float32Array(width * height);
   const vNew = new Float32Array(width * height);
   
-  // Update each cell
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const idx = y * width + x;
       
-      // Compute Laplacians
       const lapU = laplacian(u, width, height, x, y);
       const lapV = laplacian(v, width, height, x, y);
       
-      // Current concentrations
       const uVal = u[idx];
       const vVal = v[idx];
-      
-      // Reaction terms
       const reaction = uVal * vVal * vVal;
       
-      // Gray-Scott equations
-      // ∂U/∂t = DU * ∇²U − U * V² + F * (1 − U)
       const dUdt = du * lapU - reaction + f * (1.0 - uVal);
-      
-      // ∂V/∂t = DV * ∇²V + U * V² − (F + k) * V
       const dVdt = dv * lapV + reaction - (f + k) * vVal;
       
-      // Euler step
-      uNew[idx] = uVal + dt * dUdt;
-      vNew[idx] = vVal + dt * dVdt;
-      
-      // Clamp to prevent numerical instabilities
-      uNew[idx] = Math.max(0, Math.min(1, uNew[idx]));
-      vNew[idx] = Math.max(0, Math.min(1, vNew[idx]));
+      uNew[idx] = Math.max(0, Math.min(1, uVal + dt * dUdt));
+      vNew[idx] = Math.max(0, Math.min(1, vVal + dt * dVdt));
     }
   }
   
-  // Copy new values back
   u.set(uNew);
   v.set(vNew);
 }
 
 /**
- * Reset simulation with new seed.
+ * Resets simulation state with new seed pattern.
  */
 export function resetSimulation(
   state: SimulationState,

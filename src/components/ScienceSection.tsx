@@ -23,8 +23,8 @@ export function ScienceSection() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-12 items-start">
-          {/* Left column: Text content */}
+        <div className="max-w-4xl mx-auto">
+          {/* Single column: Text content */}
           <div className="space-y-12">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -119,25 +119,6 @@ export function ScienceSection() {
               </p>
             </motion.div>
           </div>
-
-          {/* Right column: Visual examples */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="space-y-6"
-          >
-            <div className="bg-gradient-to-br from-yellow-500/20 via-cyan-500/20 to-yellow-500/20 rounded-3xl aspect-square flex items-center justify-center backdrop-blur-sm border border-yellow-500/30 shadow-2xl">
-              <p className="text-gray-300 text-center px-6 font-light">
-                Pattern visualization<br />examples would appear here
-              </p>
-            </div>
-            <div className="bg-gradient-to-br from-cyan-500/20 via-yellow-500/20 to-cyan-500/20 rounded-3xl aspect-square flex items-center justify-center backdrop-blur-sm border border-yellow-500/30 shadow-2xl">
-              <p className="text-gray-300 text-center px-6 font-light">
-                Additional pattern<br />demonstrations
-              </p>
-            </div>
-          </motion.div>
         </div>
       </div>
     </section>

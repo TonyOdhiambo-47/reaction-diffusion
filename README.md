@@ -10,14 +10,17 @@ This application simulates 2D reaction-diffusion systems using the Gray-Scott mo
 
 - Real-time Gray-Scott reaction-diffusion simulation with Canvas 2D rendering
 - Interactive parameter controls for diffusion rates, feed/kill rates, and simulation speed
-- Multiple color palettes optimized for black backgrounds
+- Multiple high-contrast color palettes optimized for black backgrounds
 - Resolution options: 128x128, 256x256, or 512x512 grid sizes
 - PNG export functionality
+- State persistence via localStorage and URL parameters
+- Keyboard shortcuts for simulation control
+- FPS monitoring
 - Responsive design with smooth animations
 
 ## Tech Stack
 
-- React + TypeScript
+- React 19 + TypeScript
 - Vite
 - Tailwind CSS
 - Framer Motion
@@ -56,20 +59,25 @@ npm run preview
 src/
 ├── components/          # React components
 │   ├── ui/             # Base UI components
-│   ├── Hero.tsx        # Hero section
-│   ├── SimulatorCanvas.tsx  # Canvas wrapper
+│   ├── Hero.tsx        # Landing page hero section
+│   ├── SimulatorCanvas.tsx  # Canvas wrapper component
 │   ├── ControlPanel.tsx     # Parameter controls
-│   ├── ScienceSection.tsx   # Science explanation
-│   └── Footer.tsx          # Footer
+│   ├── ScienceSection.tsx   # Educational content
+│   └── Footer.tsx          # Footer component
 ├── simulation/         # Core simulation logic
-│   ├── grayScott.ts    # Gray-Scott model
-│   ├── colorPalettes.ts    # Color mapping
+│   ├── grayScott.ts    # Gray-Scott model implementation
+│   ├── colorPalettes.ts    # Color mapping functions
 │   └── presets.ts      # Parameter presets
 ├── hooks/
-│   └── useReactionDiffusion.ts  # Simulation hook
+│   ├── useReactionDiffusion.ts  # Main simulation hook
+│   ├── useKeyboardShortcuts.ts  # Keyboard shortcuts
+│   ├── useFPS.ts       # FPS monitoring
+│   ├── useLocalStorage.ts  # State persistence
+│   └── useUrlParams.ts # URL parameter sync
 ├── lib/
-│   └── utils.ts        # Utilities
-└── App.tsx             # Main component
+│   ├── utils.ts        # Utility functions
+│   └── persistence.ts  # State persistence utilities
+└── App.tsx             # Main application component
 ```
 
 ## Gray-Scott Model
@@ -86,7 +94,7 @@ Where:
 - DU, DV: Diffusion coefficients
 - F: Feed rate
 - k: Kill rate
-- ∇²: Laplacian operator (5-point stencil)
+- ∇²: Laplacian operator (5-point stencil with periodic boundary conditions)
 
 ## Usage
 
@@ -96,9 +104,26 @@ Where:
 4. Change color palette to see different visual styles
 5. Click "Download PNG" to export the current frame
 
+### Keyboard Shortcuts
+
+- Space: Play/Pause
+- S: Step forward
+- R: Reset simulation
+- Shift+R: Random seed
+- E: Export PNG
+- Escape: Pause
+
 ## Performance
 
-- Efficient Canvas 2D rendering with direct pixel manipulation
-- Animation pauses when browser tab is hidden
-- Resolution can be adjusted for performance
-- Simulation speed can be increased for faster evolution
+- Efficient Canvas 2D rendering with direct pixel manipulation via ImageData
+- Animation automatically pauses when browser tab is hidden
+- Resolution can be adjusted for performance (128x128 for faster, 512x512 for higher quality)
+- Simulation speed can be increased (1-10 steps per frame) for faster evolution
+
+## Implementation Details
+
+- Uses Float32Array for efficient numerical computation
+- Explicit Euler method for time stepping
+- Periodic boundary conditions
+- Debounced localStorage writes to prevent excessive I/O
+- URL parameter synchronization for shareable configurations

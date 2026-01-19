@@ -32,7 +32,7 @@ export interface UseReactionDiffusionReturn {
 }
 
 /**
- * Hook for managing reaction-diffusion simulation state and rendering.
+ * Manages reaction-diffusion simulation state and canvas rendering.
  */
 export function useReactionDiffusion({
   width,
@@ -52,14 +52,10 @@ export function useReactionDiffusion({
   
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // Update stepsPerFrame ref
   useEffect(() => {
     stepsPerFrameRef.current = stepsPerFrame;
   }, [stepsPerFrame]);
 
-  /**
-   * Render current simulation state to canvas
-   */
   const render = useCallback(() => {
     const canvas = canvasRef.current;
     const state = stateRef.current;
@@ -71,41 +67,34 @@ export function useReactionDiffusion({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size
     canvas.width = width;
     canvas.height = height;
 
-    // Create ImageData for efficient pixel manipulation
     const imageData = ctx.createImageData(width, height);
     const data = imageData.data;
 
-    // Map simulation state to colors
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         const idx = y * width + x;
         const u = state.u[idx];
         const v = state.v[idx];
-        
         const [r, g, b] = mapToColor(u, v, paletteRef.current, 'uv');
         
         const pixelIdx = (y * width + x) * 4;
-        data[pixelIdx] = r;     // R
-        data[pixelIdx + 1] = g; // G
-        data[pixelIdx + 2] = b; // B
-        data[pixelIdx + 3] = 255; // A
+        data[pixelIdx] = r;
+        data[pixelIdx + 1] = g;
+        data[pixelIdx + 2] = b;
+        data[pixelIdx + 3] = 255;
       }
     }
 
-    // Put image data to canvas
     ctx.putImageData(imageData, 0, 0);
   }, [width, height]);
 
-  // Initialize or recreate simulation state when dimensions change
   useEffect(() => {
     if (!stateRef.current || stateRef.current.width !== width || stateRef.current.height !== height) {
       stateRef.current = createSimulationState(width, height, seedType);
     }
-    // Render after state is created/updated
     const timer = setTimeout(() => {
       if (stateRef.current && canvasRef.current) {
         render();
@@ -114,39 +103,28 @@ export function useReactionDiffusion({
     return () => clearTimeout(timer);
   }, [width, height, seedType, render]);
 
-  // Update params ref when it changes
   useEffect(() => {
     paramsRef.current = initialParams;
   }, [initialParams]);
 
-  // Update palette ref when it changes
   useEffect(() => {
     paletteRef.current = initialPalette;
   }, [initialPalette]);
-
-  /**
-   * Animation loop
-   */
   const animate = useCallback(() => {
     const state = stateRef.current;
     if (!state) return;
 
-    // Perform simulation steps
     const steps = stepsPerFrameRef.current;
     for (let i = 0; i < steps; i++) {
       stepSimulation(state, paramsRef.current, dt);
     }
 
-    // Render
     render();
 
-    // Continue animation if playing
     if (isPlaying) {
       animationFrameRef.current = requestAnimationFrame(animate);
     }
   }, [isPlaying, dt, render]);
-
-  // Start/stop animation based on isPlaying
   useEffect(() => {
     if (isPlaying) {
       animationFrameRef.current = requestAnimationFrame(animate);
@@ -164,7 +142,6 @@ export function useReactionDiffusion({
     };
   }, [isPlaying, animate]);
 
-  // Pause when tab is hidden
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden && isPlaying) {
@@ -178,7 +155,6 @@ export function useReactionDiffusion({
     };
   }, [isPlaying]);
 
-  // Initial render - wait for state and canvas to be ready
   useEffect(() => {
     if (stateRef.current && canvasRef.current) {
       render();

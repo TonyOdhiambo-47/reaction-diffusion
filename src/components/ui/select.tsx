@@ -9,23 +9,30 @@ export interface SelectProps {
   options: { value: string; label: string }[];
   placeholder?: string;
   className?: string;
+  id?: string;
+  'aria-label'?: string;
 }
 
 const Select = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   SelectProps
->(({ value, onValueChange, options, placeholder, className }, ref) => (
-  <SelectPrimitive.Root value={value} onValueChange={onValueChange}>
-    <SelectPrimitive.Trigger
-      ref={ref}
-      className={cn(
-        'flex h-10 w-full items-center justify-between rounded-lg border border-yellow-500/30 bg-slate-800/50 backdrop-blur-sm px-3 py-2 text-sm text-yellow-400',
-        'focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 focus:ring-offset-slate-900',
-        'disabled:cursor-not-allowed disabled:opacity-50',
-        'hover:border-yellow-500/50 hover:bg-slate-700/50',
-        className
-      )}
-    >
+>(({ value, onValueChange, options, placeholder, className, ...props }, ref) => {
+  const ariaLabel = placeholder || 'Select option';
+  
+  return (
+    <SelectPrimitive.Root value={value} onValueChange={onValueChange}>
+      <SelectPrimitive.Trigger
+        ref={ref}
+        className={cn(
+          'flex h-10 w-full items-center justify-between rounded-lg border border-yellow-500/30 bg-slate-800/50 backdrop-blur-sm px-3 py-2 text-sm text-yellow-400',
+          'focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 focus:ring-offset-slate-900',
+          'disabled:cursor-not-allowed disabled:opacity-50',
+          'hover:border-yellow-500/50 hover:bg-slate-700/50',
+          className
+        )}
+        aria-label={ariaLabel}
+        {...props}
+      >
       <SelectPrimitive.Value placeholder={placeholder} />
       <SelectPrimitive.Icon>
         <ChevronDown className="h-4 w-4 opacity-70 text-yellow-400" />
@@ -54,7 +61,8 @@ const Select = React.forwardRef<
       </SelectPrimitive.Content>
     </SelectPrimitive.Portal>
   </SelectPrimitive.Root>
-));
+  );
+});
 Select.displayName = 'Select';
 
 export { Select };
